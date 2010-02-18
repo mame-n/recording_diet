@@ -1,22 +1,32 @@
 require 'pstore'
 require 'date'
 
-exit unless ARGV[0]
-weight = ARGV[0].to_f 
-offset = 0
-offset = ARGV[1].to_i if ARGV[1]
-date = Date.today + offset
+def showdb(db)
+  db['root'].sort.each { |date,body|
+    print  "#{date.month}/#{date.day} :  #{body}kg\n"
+  }
+end
 
 db = PStore.new("/Users/nakauchiaya/Documents/ruby/src/recorddiet/recorddiet.db")
+#db = PStore.new("./recorddiet.db")
+
+if !ARGV[0]
+  db.transaction { showdb(db) } 
+  exit
+end
+
+weight = ARGV[0].to_f 
+
+offset = ARGV[1] ? ARGV[1].to_i : 0
+date = Date.today + offset
+
 db.transaction {
 #  p date
 #  p weight
 #  p db
   db["root"] = {} unless db["root"]
-  a = db["root"]
-  a[date] = weight
+  db["root"][date] = weight
 
-  db['root'].each { |date,body|
-    print  "#{date.month}/#{date.day} :  #{body}kg\n"
-  }
+  showdb(db)
 }
+
