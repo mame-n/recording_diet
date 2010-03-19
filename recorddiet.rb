@@ -11,8 +11,10 @@ def showdb(db)
     }
   else
     s = ""
-    db['root'].sort.each { |date,body|
-      s += "<tr><td>#{date.month}/#{date.day}</td><td>#{body}kg</td></tr>\n"
+    db['root'].to_a.sort{ |a,b|
+      b[0] <=> a[0]
+    }.each { |v|
+      s += "<tr><td>#{v[0].month}/#{v[0].day}</td><td>#{v[1]}kg</td></tr>\n"
     }
     cgi = CGI.new("html4")
     cgi.out() {
@@ -25,7 +27,6 @@ def showdb(db)
 end
 
 db = PStore.new("/Users/nakauchiaya/Data/recorddiet.db")
-#db = PStore.new("/Users/nakauchiaya/Documents/ruby/src/recorddiet/recorddiet.db")
 #db = PStore.new("./recorddiet.db")
 
 if !ARGV[0]
